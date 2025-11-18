@@ -48,8 +48,8 @@ module datapath(input  clk, reset,
   regfile     rf(
     .clk(clk), 
     .we3(RegWrite), 
-    .a1(Instr[19:15]), 
-    .a2(Instr[24:20]), 
+    .a1(InstrD[19:15]), // check
+    .a2(InstrD[24:20]), // check
     .a3(Instr[11:7]), 
     .wd3(Result), 
     .rd1(SrcA), 
@@ -57,7 +57,7 @@ module datapath(input  clk, reset,
   ); 
 
   extend      ext(
-    .instr(Instr[31:7]), 
+    .instr(InstrD[31:7]), // check
     .immsrc(ImmSrc), 
     .immext(ImmExt)
   ); 
@@ -84,5 +84,14 @@ module datapath(input  clk, reset,
     .d2(PCPlus4), 
     .s(ResultSrc), 
     .y(Result)
-  ); 
+  );
+
+  // datapath with reg
+  wire [31:0] InstrD, PCPlus4D, PCD;
+  flopr #(32) instrd(clk, reset, Instr, InstrD);
+  flopr #(32) pcplus4d(clk, reset, PCPlus4, PCPlus4D);
+  flopr #(32) pcd(clk, reset, PC, PCD);
+
+  flopr #() rd1e(clk, reset);
+
 endmodule
