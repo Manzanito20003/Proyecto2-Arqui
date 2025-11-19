@@ -11,6 +11,7 @@ module hazard(Rs1D,Rs2D,Rs1E,Rs2E,RdE,RdM,RdW,RegWriteM,RegWriteW,ResultSrcE0,PC
   output StallF, StallD;
   output FlushE,FlushD;
   output reg [1:0] ForwardAE, ForwardBE;
+  output reg [1:0] ForwardAE, ForwardBE;
 
   //logic hardz unit: Reenviar para resolver riesgos de datos cuando sea necesario
   always @(*)
@@ -34,11 +35,15 @@ module hazard(Rs1D,Rs2D,Rs1E,Rs2E,RdE,RdM,RdW,RegWriteM,RegWriteW,ResultSrcE0,PC
   end 
   
   wire lwStall;
+  
+  wire lwStall;
   //stall logic:Detenerse cuando ocurre un riesgo de carga
   assign lwStall = (((Rs1D == RdE) | (Rs2D == RdE)) & ResultSrcE0 & (RdE != 0));
   assign StallF = lwStall;
   assign StallD =lwStall;
   //flush : Vacíe cuando se tome una rama o una carga introduzca una burbuja:
+  assign FlushD =PCSrcE;
+  assign FlushE =lwStall | PCSrcE;
   assign FlushD =PCSrcE;
   assign FlushE =lwStall | PCSrcE;
 

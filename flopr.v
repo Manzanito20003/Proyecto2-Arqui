@@ -1,3 +1,4 @@
+
 module flopr #(parameter WIDTH = 8)
              (input  clk, reset,
               input  [WIDTH-1:0] d, 
@@ -6,6 +7,8 @@ module flopr #(parameter WIDTH = 8)
   always @(posedge clk or posedge reset) begin 
     if (reset) q <= {WIDTH{1'b0}}; 
     else       q <= d; 
+
+
   end
 endmodule
 

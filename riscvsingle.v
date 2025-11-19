@@ -20,6 +20,7 @@ module riscvsingle(input  clk, reset,
 
   assign DataAdr = ALUResult;
 
+  // pending: add en controller ResultSrcE
   controller c(
     .clk(clk),
     .reset(reset),
@@ -40,6 +41,10 @@ module riscvsingle(input  clk, reset,
     .ResultSrcE0(ResultSrcE0)
   ); 
   
+
+  wire enableStallF, enableStallD, resetFlushE;
+  wire [1:0] ForwardAE, ForwardBE;
+  wire [3:0] Rs1D, Rs2D, RdEO;
   datapath dp(
     .clk(clk), 
     .reset(reset), 
