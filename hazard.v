@@ -1,16 +1,16 @@
-module hazard();
-  input [3:0]Rs1D, Rs2D;
-  input [3:0]Rs1E, Rs2E,RdE;
-  input [3:0]RdM;
-  input [3:0]RdW;
+module hazard(Rs1D,Rs2D,Rs1E,Rs2E,RdE,RdM,RdW,RegWriteM,RegWriteW,ResultSrcE0,PCSrcE,StallF, StallD,FlushE,FlushD,ForwardAE, ForwardBE);
+  input [4:0] Rs1D, Rs2D;
+  input [4:0] Rs1E, Rs2E, RdE;
+  input [4:0] RdM;
+  input [4:0] RdW;
   
   input  RegWriteM, RegWriteW;
-  input  ResultSrcE,
+  input  ResultSrcE0;
   input  PCSrcE;
 
   output StallF, StallD;
   output FlushE,FlushD;
-  output [1:0] ForwardAE, ForwardBE;
+  output reg [1:0] ForwardAE, ForwardBE;
 
   //logic hardz unit: Reenviar para resolver riesgos de datos cuando sea necesario
   always @(*)
@@ -32,11 +32,14 @@ module hazard();
     else 
       ForwardBE = 2'b00;
   end 
+  
+  wire lwStall;
   //stall logic:Detenerse cuando ocurre un riesgo de carga
-  assign StallD = ( ( (Rs1D == RdE) | (Rs2D == RdE) ) & RegWriteE & (ResultSrcE == 0) ) ? 1 : 0;
-  assign StallF =StallD;
+  assign lwStall = (((Rs1D == RdE) | (Rs2D == RdE)) & ResultSrcE0 & (RdE != 0));
+  assign StallF = lwStall;
+  assign StallD =lwStall;
   //flush : Vacíe cuando se tome una rama o una carga introduzca una burbuja:
-  assign FlushE =StallD | PCSrcE;
-  assign FlushD =StallD;
+  assign FlushD =PCSrcE;
+  assign FlushE =lwStall | PCSrcE;
 
 endmodule
