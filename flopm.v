@@ -3,17 +3,17 @@ module flopE (input  clk, reset,
                input  [1:0]ResultSrcE,
                input  MemWriteE,
                
-               output  RegWriteM,
-               output  [1:0]ResultSrcM,
-               output  MemWriteM,
+               output  reg RegWriteM,
+               output  reg [1:0]ResultSrcM,
+               output  reg MemWriteM,
                );
   always @(posedge clk or posedge reset) 
   begin 
     if (reset) 
     begin 
-        RegWriteM <= 0; 
+        RegWriteM <= 1'b0; 
         ResultSrcM <= 2'b00; 
-        MemWriteM <= 0; 
+        MemWriteM <= 1'b0; 
     end
     else
     begin 
