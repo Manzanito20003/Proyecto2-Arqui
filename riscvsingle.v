@@ -16,6 +16,7 @@ module riscvsingle(input  clk, reset,
   // DataAdr is connected to ALUResult
   assign DataAdr = ALUResult;
 
+  // pending: add en controller ResultSrcE
   controller c(
     .op(Instr[6:0]), 
     .funct3(Instr[14:12]), 
@@ -31,6 +32,10 @@ module riscvsingle(input  clk, reset,
     .ALUControl(ALUControl)
   ); 
   
+
+  wire enableStallF, enableStallD, resetFlushE;
+  wire [1:0] ForwardAE, ForwardBE;
+  wire [3:0] Rs1D, Rs2D, RdEO;
   datapath dp(
     .clk(clk), 
     .reset(reset), 
@@ -45,18 +50,31 @@ module riscvsingle(input  clk, reset,
     .Instr(Instr),
     .ALUResult(ALUResult), 
     .WriteData(WriteData), 
-    .ReadData(ReadData)
-  ); 
-
-  hazard hz(
-    .InstrD(Instr),
-    .RegWriteE(RegWriteE),
-    .RdE(RdE),
+    .ReadData(ReadData),
+    
+    .enableStallF(enableStallF),
+    .enableStallD(enableStallD),
+    .resetFlushE(resetFlushE),
+    .ForwardAE(ForwardAE),
+    .ForwardBE(ForwardBE),
     .Rs1D(Rs1D),
     .Rs2D(Rs2D),
-    .StallF(StallF),
-    .StallD(StallD),
-    .FlushE(FlushE)
+    .RdEO(RdEO)
+  ); 
+
+  // pendiente
+  hazard hz(
+    .InstrD(Instr),
+    .RegWriteM(),
+    .RegWriteW(),
+    .ResultSrcE(),
+    .PCSrcE(),
+    .RdE(RdEO),
+    .Rs1D(Rs1D),
+    .Rs2D(Rs2D),
+    .StallF(enableStallF),
+    .StallD(enableStallD),
+    .FlushE(resetFlushE)
   );
   
 endmodule
