@@ -47,7 +47,16 @@ module riscvsingle(input  clk, reset,
     .WriteData(WriteData), 
     .ReadData(ReadData)
   ); 
-  
 
+  hazard hz(
+    .InstrD(Instr),
+    .RegWriteE(RegWriteE),
+    .RdE(RdE),
+    .Rs1D(Rs1D),
+    .Rs2D(Rs2D),
+    .StallF(StallF),
+    .StallD(StallD),
+    .FlushE(FlushE)
+  );
   
 endmodule
