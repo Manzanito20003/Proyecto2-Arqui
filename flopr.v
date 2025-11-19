@@ -8,7 +8,6 @@ module flopr #(parameter WIDTH = 8)
     if (reset) q <= {WIDTH{1'b0}}; 
     else       q <= d; 
 
-
   end
 endmodule
 
