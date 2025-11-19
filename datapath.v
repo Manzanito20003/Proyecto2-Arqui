@@ -16,6 +16,8 @@ module datapath(input  clk, reset,
   wire [31:0] ImmExt; 
   wire [31:0] SrcA, SrcB; 
   wire [31:0] Result; 
+  wire [31:0] ALUResultE;
+  wire [31:0] WriteDataD;
 
   // next PC logic
   flopr #(WIDTH) pcreg(
@@ -53,7 +55,7 @@ module datapath(input  clk, reset,
     .a3(RdW), // check
     .wd3(Result), 
     .rd1(SrcA), 
-    .rd2(WriteData)
+    .rd2(WriteDataD)
   ); 
 
   extend      ext(
@@ -74,7 +76,7 @@ module datapath(input  clk, reset,
     .a(RD1E), 
     .b(SrcB), 
     .alucontrol(ALUControl), 
-    .result(ALUResult), 
+    .result(ALUResultE), 
     .zero(Zero)
   ); 
 
@@ -95,7 +97,7 @@ module datapath(input  clk, reset,
   wire [31:0] RD1E, RD2E, PCE, ImmExtE, PCPlus4E;
   wire [3:0] RdE;
   flopr #(32) rd1e(.clk(clk), .reset(reset), .d(SrcA), .q(RD1E));
-  flopr #(32) rd2e(.clk(clk), .reset(reset), .d(WriteData), .q(RD2E));
+  flopr #(32) rd2e(.clk(clk), .reset(reset), .d(WriteDataD), .q(RD2E));
   flopr #(32) pce_reg(.clk(clk), .reset(reset), .d(PCD), .q(PCE));
   flopr #(4) rde(.clk(clk), .reset(reset), .d(InstrD[11:7]) , .q(RdE));
   flopr #(32) immexte(.clk(clk), .reset(reset), .d(ImmExt), .q(ImmExtE));
@@ -104,11 +106,12 @@ module datapath(input  clk, reset,
 
   wire [31:0] ALUResultM, WriteDataM, PCPlus4M;
   wire [3:0] RdM;
-  flopr #(32) aluresultm(.clk(clk), .reset(reset), .d(ALUResult), .q(ALUResultM));
+  flopr #(32) aluresultm(.clk(clk), .reset(reset), .d(ALUResultE), .q(ALUResultM));
+  assign ALUResult = ALUResultW;
   flopr #(32) writedatam(.clk(clk), .reset(reset), .d(RD2E), .q(WriteDataM));
+  assign WriteData = WriteDataM;
   flopr #(4) rdm(.clk(clk), .reset(reset), .d(RdE), .q(RdM));
   flopr #(32) pcplus4m(.clk(clk), .reset(reset), .d(PCPlus4E), .q(PCPlus4M));
-
 
   wire [31:0] ALUResultW, ReadDataW;
   wire [3:0] RdW;
