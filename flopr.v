@@ -1,4 +1,3 @@
-
 module flopr #(parameter WIDTH = 8)
              (input  clk, reset,
               input  [WIDTH-1:0] d, 
@@ -7,7 +6,6 @@ module flopr #(parameter WIDTH = 8)
   always @(posedge clk or posedge reset) begin 
     if (reset) q <= {WIDTH{1'b0}}; 
     else       q <= d; 
-
   end
 endmodule
 
@@ -23,6 +21,7 @@ module flopenr #(parameter WIDTH = 8)
   end
 endmodule
 
+//chi 
 module flopenrc #(parameter WIDTH = 8)
                  (input  clk, reset,
                   input  en,
@@ -30,7 +29,7 @@ module flopenrc #(parameter WIDTH = 8)
                   input  [WIDTH-1:0] d,
                   output reg [WIDTH-1:0] q);
 
-  always @(posedge clk or posedge reset) begin
+  always @(posedge clk or posedge reset or en) begin
     if (reset) q <= {WIDTH{1'b0}};
     else if (clear) q <= {WIDTH{1'b0}};
     else if (en) q <= d;

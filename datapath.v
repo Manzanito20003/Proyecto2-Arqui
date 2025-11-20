@@ -35,9 +35,29 @@ module datapath(input  clk, reset,
   wire [4:0] RdD;
 
   assign InstrF = Instr;
-  assign RdD = InstrD[11:7];
+
+  wire [6:0] opD;
+  assign opD = InstrD[6:0];
+
+  assign RdD  = InstrD[11:7];
   assign Rs1D = InstrD[19:15];
-  assign Rs2D = InstrD[24:20];
+
+  // Sólo hay segundo registro fuente real en:
+  // - R-type   (0110011)
+  // - Store    (0100011)
+  // - Branch   (1100011)
+  // En el resto (ADDI, ANDI, LW, JAL, etc.) ponemos Rs2D = 0
+  assign Rs2D = (opD == 7'b0110011 ||   // R-type
+                 opD == 7'b0100011 ||   // sw
+                 opD == 7'b1100011)     // beq/bne...
+             ? InstrD[24:20]
+             : 5'b00000;
+
+
+
+
+
+
 
   flopenr #(WIDTH) pcreg(
     .clk(clk), 
